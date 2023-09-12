@@ -116,7 +116,13 @@ targetE <- c("AL","AR","FL","GA","KY", "LA", "MS", "NC", "SC", "TN", "VA", "GU",
 targetO <- c("GU", "PR", "MP", "AS", "VI")
 funData <- dplyr::filter(funData, recipient_state %in% targetE)
 DataTerr <- dplyr::filter(funData, recipient_state %in% targetO)
-
+funData$Region <- "Southeast"
+sankey_SE_Data <- select(funData, budget_subfunction, transaction_obligated_amount, Region)
+sankey_SE_Data2 <- select(funData, award_type, transaction_obligated_amount, Region)
+# colnames(sankey_SE_Data2)[1] <- "budget_subfunction"
+# colnames(sankey_SE_Data2)[3] <- "award_type"
+# sankey_SE_Data <- as.data.frame(rbind(sankey_SE_Data, sankey_SE_Data2))
+write.csv(sankey_SE_Data,file="C:/Users/GraceParker/Downloads/2023_FederalFundingTracker/funData_sankey_states.csv")
 #filter pop by state
 targetF <- c(".Alabama",".Arkansas",".Florida",".Georgia",".Kentucky", ".Louisiana", ".Mississippi", ".North Carolina", ".South Carolina", ".Tennessee", ".Virginia")
 pop2022 <- dplyr::filter(pop2022, State %in% targetF)
@@ -149,7 +155,7 @@ totPop <- sum(pop2022$X.3)
 Since 2021 there have been significant increases in federal funding dedicated to climate, energy, and environmental initiatives. Landmark legislation like the Bipartisan Infrastructure Law (BIL) and Inflation Reduction Act (IRA) mark the largest investments in climate mitigation in American history. While the resources available through these laws provide unprecedented opportunities for communities across the United States, the Southeast Energy Efficiency Alliance (SEEA) wants to ensure that this funding is accessible to all communities in our region, particularly those who have been underserved by federal resources in the past. 
 <br>
 <br>
-This dashboard reveals trends in federal funding awards across the Southeast to understand where funding is going, what it is being used for, and ultimately how accessible it has been for communities without a history of substantial federal investments. Using this information, we aim to support decision-makers across the region in applying for funding and supporting under-resourced communities. This dashboard focuses on funding available through the BIL, and we plan to address additional sources of funding, including the Inflation Reduction Act (IRA) in future versions of this whitepaper as more funding is allocated.
+This dashboard reveals trends in federal funding awards across the U.S. territories to understand where funding is going, what it is being used for, and ultimately how accessible it has been for communities without a history of substantial federal investments. Using this information, we aim to support decision-makers across the region in applying for funding and supporting under-resourced communities. This dashboard focuses on funding available through the BIL, and we plan to address additional sources of funding, including the Inflation Reduction Act (IRA) in future versions of this whitepaper as more funding is allocated.
 <br>
 <br>
 The Infrastructure Investment and Jobs Act, also known as the Bipartisan Infrastructure Law (BIL), was passed in November 2021 and allocates $1.2 trillion over ten years in funding for infrastructure projects including roads, public transit, broadband, and electric grid upgrades. As federal agencies continue to allocate BIL funding, this map shows how much funding recipients in the Southeast have received as of July 13, 2023. Funding is tied to the recipient's location, which is often distinct from the place of performance, meaning that the funding does not necessarily fund work in that state However, the recipient location is the best available indicator of where this funding is invested.
@@ -512,6 +518,9 @@ funcAS%>% select(Category, Funding)%>% kbl() %>%
   column_spec(2, "3cm")
 ```
 
+##Spotlight on Projects
+American Samoa Government Department of Commerce: The National Oceanic and Atmospheric Administration committed $203,000 to American Samoa for wetland delineation, wetland monitoring, training, and community outreach, as well as to create recommendations for permitting policies and nature-based restoration projects. 
+
 ### Guam
 ```{r, echo=FALSE, fig.align='center'}
 #function and award type data, filter to GUAM
@@ -555,6 +564,9 @@ funcGU%>% select(Category, Funding)%>% kbl() %>%
   column_spec(2, "3cm")
 ```
 
+## Spotlight on Projects
+Teleguam Holdings: The Department of Agriculture committed $29 million to Teleguam Holdings to provide internet connection to 8,000 households in Guam.
+
 ### Northern Mariana Islands
 ```{r, echo=FALSE, fig.align='center'}
 #function and award type data, filter to Northern Mariana Islands
@@ -595,6 +607,9 @@ funcMP%>% select(Category, Funding)%>% kbl() %>%
   column_spec(1, "10cm")%>%
   column_spec(2, "3cm")
 ```
+
+## Spotlight on Projects 
+Commonwealth Utilities Corporation: The Environmental Protection Agency committed $20.6 million to improve the drinking water system on the Northern Mariana Islands, including by replacing and upgrading water mains and pressurizing the transmission and distribution system. These projects will aid in providing reliable, potable drinking water to every customer.
 ### Puerto Rico
 ```{r, echo=FALSE, fig.align='center'}
 #function and award type data, filter to Puerto Rico
@@ -636,6 +651,9 @@ funcPR%>% select(Category, Funding)%>% kbl() %>%
   column_spec(1, "10cm")%>%
   column_spec(2, "3cm")
 ```
+
+##Spotlight on Projects
+Institute for Socio-Ecological Research: The Department of Commerce will commit $10.6 million to construct five acres of coral reef at three locations in Puerto Rico. The project will reintroduce slow-growing, reef-building coral species, including threatened species. 
 ### Virgin Islands
 ```{r, echo=FALSE, fig.align='center'}
 #function and award type data, filter to Virgin Islands
@@ -677,3 +695,6 @@ funcVI%>% select(Category, Funding)%>% kbl() %>%
   column_spec(1, "10cm")%>%
   column_spec(2, "3cm")
 ```
+
+## Spotlight on Projects
+Island Conservation: The Department of Interior committed $250,000 to Island Conservation to aid in invasive species eradication and create a refuge for the endangered Virgin Islands tree boa.
