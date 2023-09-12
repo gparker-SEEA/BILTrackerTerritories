@@ -518,7 +518,7 @@ funcAS%>% select(Category, Funding)%>% kbl() %>%
   column_spec(2, "3cm")
 ```
 
-##Spotlight on Projects
+#### Spotlight on Projects
 American Samoa Government Department of Commerce: The National Oceanic and Atmospheric Administration committed $203,000 to American Samoa for wetland delineation, wetland monitoring, training, and community outreach, as well as to create recommendations for permitting policies and nature-based restoration projects. 
 
 ### Guam
@@ -564,7 +564,7 @@ funcGU%>% select(Category, Funding)%>% kbl() %>%
   column_spec(2, "3cm")
 ```
 
-## Spotlight on Projects
+#### Spotlight on Projects
 Teleguam Holdings: The Department of Agriculture committed $29 million to Teleguam Holdings to provide internet connection to 8,000 households in Guam.
 
 ### Northern Mariana Islands
@@ -592,7 +592,7 @@ pie <- ggplot(funcMP, aes(x="", y=Percent, fill=Category))+
   geom_text_repel(data = funcMP,
                    aes(y = label.point, label = ifelse(Percent>10,paste0(Percent, "%"),""), family="Open Sans"),
                    size = 4.5, nudge_x = 1, show.legend = FALSE)+
-  ggtitle("Northern Marian Islands Funding by Category")+
+  ggtitle("Northern Mariana Islands Funding by Category")+
   theme_void(base_family = "Open Sans")
 pie
 ```
@@ -608,8 +608,9 @@ funcMP%>% select(Category, Funding)%>% kbl() %>%
   column_spec(2, "3cm")
 ```
 
-## Spotlight on Projects 
+#### Spotlight on Projects 
 Commonwealth Utilities Corporation: The Environmental Protection Agency committed $20.6 million to improve the drinking water system on the Northern Mariana Islands, including by replacing and upgrading water mains and pressurizing the transmission and distribution system. These projects will aid in providing reliable, potable drinking water to every customer.
+
 ### Puerto Rico
 ```{r, echo=FALSE, fig.align='center'}
 #function and award type data, filter to Puerto Rico
@@ -652,8 +653,9 @@ funcPR%>% select(Category, Funding)%>% kbl() %>%
   column_spec(2, "3cm")
 ```
 
-##Spotlight on Projects
+#### Spotlight on Projects
 Institute for Socio-Ecological Research: The Department of Commerce will commit $10.6 million to construct five acres of coral reef at three locations in Puerto Rico. The project will reintroduce slow-growing, reef-building coral species, including threatened species. 
+
 ### Virgin Islands
 ```{r, echo=FALSE, fig.align='center'}
 #function and award type data, filter to Virgin Islands
@@ -696,5 +698,5 @@ funcVI%>% select(Category, Funding)%>% kbl() %>%
   column_spec(2, "3cm")
 ```
 
-## Spotlight on Projects
+#### Spotlight on Projects
 Island Conservation: The Department of Interior committed $250,000 to Island Conservation to aid in invasive species eradication and create a refuge for the endangered Virgin Islands tree boa.
