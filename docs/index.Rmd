@@ -287,7 +287,7 @@ totPop <- sum(pop2022$X.3)
 ## Bipartisan Infrastructure Law Funding in the Territories
 
 <div class = "row">
-<div class = "col-md-8" style="padding-right:25px;">
+<div class = "col-md-8" style="padding-right:5px;">
 ```{r, echo=FALSE, message=FALSE, warning=FALSE, echo=FALSE}
 BIL$StateFunding <- formattable::currency(BIL$StateFunding)
 
@@ -357,7 +357,7 @@ tm_shape(Total) +
       border.col="white")+
 tm_borders(col="white", lwd=.25)+
 tmap_options(check.and.fix = TRUE)+
-tm_view(set.view=c(-66,18,7))
+tm_view(set.view=c(-65.5,18,7))
 
 #tmap GU
 tmap_mode(mode ="view")
