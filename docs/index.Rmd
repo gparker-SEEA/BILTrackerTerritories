@@ -149,36 +149,211 @@ stateData$Funding <- formattable::currency(stateData$Funding, digits = 0L)
 stateData$perCapita <- formattable::currency(stateData$perCapita, digits = 0L)
 pop2022$X.3 <- as.numeric(gsub(",","",pop2022$X.3))
 totPop <- sum(pop2022$X.3)
+
+# #Investigate negative values
+# deoblig <- filter(funData, transaction_obligated_amount < 0)
+# 
+# deoblig1 <- deoblig %>% 
+#   group_by(recipient_state) %>% dplyr::summarise(
+#   Funding = sum(transaction_obligated_amount)
+#   )%>% as.data.frame()
+# 
+# deTot <- sum(deoblig1$Funding)
+#   
+# deoblig1$Percent <- 100*(deoblig1$Funding/sum(deoblig1$Funding))
+# deoblig1$Percent <- format(round(deoblig1$Percent, 2), nsmall=2)
+# deoblig1$Percent <- as.numeric(deoblig1$Percent)
+# 
+# deoblig1$zone.start <- with(deoblig1, c(0, cumsum(Percent)[-length(Percent)]))  
+# deoblig1$zone.end <- with(deoblig1, cumsum(Percent))  
+# deoblig1$label.point <- with(deoblig1, (100-(zone.start + zone.end) / 2)) 
+# 
+# colnames(deoblig1)[1] <- "State"
+# 
+# pie <- ggplot(deoblig1, aes(x="", y=Percent, fill=State))+
+#   geom_bar(width = 1, stat = "identity")+
+#   coord_polar("y", start=0)+
+#   scale_fill_manual(values=c("#FFA07A","#900C3F", "#C70039", "#D4442D", "#00869F", "#6171AF","#DCB6D0","#C799C8", "#D2D2D2", "#7B7B7B","#585757","#17202A")) +
+#   geom_text_repel(data = deoblig1,
+#                    aes(y = label.point, label = ifelse(Percent>10,paste0(Percent, "%"),""), family="Open Sans"),
+#                    size = 4.5, nudge_x = 1, show.legend = FALSE) +
+#   ggtitle("Southeast Deobligated Funding by State")+
+#   theme_void(base_family= "Open Sans")+
+#   theme(legend.key.height = unit(.5,'cm'),
+#         legend.key.width = unit(.5, 'cm'))
+# pie
+# deoblig1$Funding <- formattable::currency(deoblig1$Funding, digits = 0L)
+# deoblig1 <- deoblig1%>%filter(State != "PR")
+# deoblig1$State[1] <- "Alabama"
+# deoblig1$State[2] <- "Arkansas"
+# deoblig1$State[3] <- "Florida"
+# deoblig1$State[4] <- "Georgia"
+# deoblig1$State[5] <- "Kentucky"
+# deoblig1$State[6] <- "Louisiana"
+# deoblig1$State[7] <- "Mississippi"
+# deoblig1$State[8] <- "North Carolina"
+# deoblig1$State[9] <- "South Carolina"
+# deoblig1$State[10] <- "Tennessee"
+# deoblig1$State[11] <- "Virginia"
+# deoblig1$Funding <- abs(deoblig1$Funding)
+# deoblig1 <- deoblig1[order(deoblig1$Funding,decreasing=TRUE),]
+# DeobTable<- deoblig1%>%select(State, Funding)%>% kbl(row.names=FALSE) %>%
+#   kable_styling(bootstrap_options = c("striped", "hover", "condensed", "responsive"), full_width = F, html_font="Calibri", font_size = 14, position="center", row_label_position = r)%>%
+#   add_header_above(c("Deobligated Funding by State"=2))%>%
+#   row_spec(1:11, color  = "black")%>%
+#   column_spec(1:2, "3cm")
+# DeobTable
+# 
+# save_kable(DeobTable,"C:/Users/GraceParker/Downloads/2023_FederalFundingTracker/Deobtable.png")
+# 
+# deobligPR <- deoblig %>% filter(recipient_state== "PR")%>%
+#   group_by(budget_subfunction) %>% dplyr::summarise(
+#   Funding = sum(transaction_obligated_amount)
+#   )%>% as.data.frame()
+# 
+# deobligPR2 <- deoblig %>% filter(recipient_state== "PR")%>%
+#   group_by(award_type) %>% dplyr::summarise(
+#   Funding = sum(transaction_obligated_amount)
+#   )%>% as.data.frame()
+# 
+# 
+# #By Category
+# deoblig2 <- deoblig %>% 
+#   group_by(budget_subfunction) %>% dplyr::summarise(
+#   Funding = sum(transaction_obligated_amount)
+#   )%>% as.data.frame()
+# 
+# deoblig2$Percent <- 100*(deoblig2$Funding/sum(deoblig2$Funding))
+# deoblig2$Percent <- format(round(deoblig2$Percent, 2), nsmall=2)
+# deoblig2$Percent <- as.numeric(deoblig2$Percent)
+# 
+# deoblig2$zone.start <- with(deoblig2, c(0, cumsum(Percent)[-length(Percent)]))  
+# deoblig2$zone.end <- with(deoblig2, cumsum(Percent))  
+# deoblig2$label.point <- with(deoblig2, (100-(zone.start + zone.end) / 2)) 
+# 
+# colnames(deoblig2)[1] <- "Category"
+# 
+# pie <- ggplot(deoblig2, aes(x="", y=Percent, fill=Category))+
+#   geom_bar(width = 1, stat = "identity")+
+#   coord_polar("y", start=0)+
+#   scale_fill_manual(values=c("#FFA07A","#900C3F", "#C70039", "#D4442D", "#00869F", "#6171AF","#DCB6D0","#C799C8", "#D2D2D2", "#7B7B7B","#585757","#17202A")) +
+#   geom_text_repel(data = deoblig2,
+#                    aes(y = label.point, label = ifelse(Percent>5 | Category == 'Energy conservation' ,paste0(Percent, "%"),""), family="Open Sans"),
+#                    size = 4.5, nudge_x = 1, show.legend = FALSE) +
+#   ggtitle("Southeast Deobligated Funding by Category")+
+#   theme_void(base_family= "Open Sans")+
+#   theme(legend.key.height = unit(.5,'cm'),
+#         legend.key.width = unit(.5, 'cm'))
+# pie
+# 
+# ggsave("C:/Users/GraceParker/Downloads/2023_FederalFundingTracker/Categories_Deob_SE.png", width = 6,   height = 4.25, dpi=1100)
+# 
+# #by Type
+# deoblig3 <- deoblig %>% 
+#   group_by(award_type) %>% 
+#   dplyr::summarise(
+#   Funding = sum(transaction_obligated_amount)
+#   )%>% as.data.frame()
+# 
+# deoblig3$Percent <- 100*(deoblig3$Funding/sum(deoblig3$Funding))
+# deoblig3$Percent <- format(round(deoblig3$Percent, 2), nsmall=2)
+# deoblig3$Percent <- as.numeric(deoblig3$Percent)
+# 
+# deoblig3$zone.start <- with(deoblig3, c(0, cumsum(Percent)[-length(Percent)]))  
+# deoblig3$zone.end <- with(deoblig3, cumsum(Percent))  
+# deoblig3$label.point <- with(deoblig3, (100-(zone.start + zone.end) / 2)) 
+# 
+# colnames(deoblig3)[1] <- "Type"
+# deoblig3$Type <- str_to_title(deoblig3$Type)
+# deoblig3$Type[6] <- "Other Financial Assistance"
+# deoblig3$Type[2] <- "Cooperative Agreement"
+# deoblig3$Type[1] <- "BPA Call"
+# deoblig3$Type[5] <- "Formula Grant"
+# deoblig3$Type[7] <- "Project Grant"
+# 
+# pie <- ggplot(deoblig3, aes(x="", y=Percent, fill=Type))+
+#   geom_bar(width = 1, stat = "identity")+
+#   coord_polar("y", start=0)+
+#   scale_fill_manual(values=c("#900C3F", "#D4442D", "#FCB616", "#75C7D3", "#00869F", "#C799C8", "#D2D2D2", "#585757")) +
+#   geom_text_repel(data = deoblig3,
+#                    aes(y = label.point, label = ifelse(Percent>5,paste0(Percent, "%"),""),family="Open Sans"),
+#                    size = 4.5, nudge_x = 1, show.legend = FALSE, max.overlaps =20) +
+#   ggtitle("Southeast Deobligated Funding by Award Type")+
+#   theme_void(base_family= "Open Sans")+ 
+#   theme(plot.title = element_text(size=12))
+# pie
 ```
+
 ## Bipartisan Infrastructure Law Funding in the Territories
-<br>
-Since 2021 there have been significant increases in federal funding dedicated to climate, energy, and environmental initiatives. Landmark legislation like the Bipartisan Infrastructure Law (BIL) and Inflation Reduction Act (IRA) mark the largest investments in climate mitigation in American history. While the resources available through these laws provide unprecedented opportunities for communities across the United States, the Southeast Energy Efficiency Alliance (SEEA) wants to ensure that this funding is accessible to all communities in our region, particularly those who have been underserved by federal resources in the past. 
-<br>
-<br>
-This dashboard reveals trends in federal funding awards across the U.S. territories to understand where funding is going, what it is being used for, and ultimately how accessible it has been for communities without a history of substantial federal investments. Using this information, we aim to support decision-makers across the region in applying for funding and supporting under-resourced communities. This dashboard focuses on funding available through the BIL, and we plan to address additional sources of funding, including the Inflation Reduction Act (IRA) in future versions of this whitepaper as more funding is allocated.
-<br>
-<br>
-The Infrastructure Investment and Jobs Act, also known as the Bipartisan Infrastructure Law (BIL), was passed in November 2021 and allocates $1.2 trillion over ten years in funding for infrastructure projects including roads, public transit, broadband, and electric grid upgrades. As federal agencies continue to allocate BIL funding, this map shows how much funding recipients in the Southeast have received as of July 13, 2023. Funding is tied to the recipient's location, which is often distinct from the place of performance, meaning that the funding does not necessarily fund work in that state However, the recipient location is the best available indicator of where this funding is invested.
-<br>
-<br>
-Almost half of the new funding, or about $274 billion, will be allocated by the Department of Transportation (USDOT). Other agencies, including the Environmental Protection Agency (EPA), the Department of Energy (DOE), the Department of Commerce (DOC), and the Department of Interior (DOI) will each award smaller amounts of funding, between $28 and $67 billion each (Badlam et al., 2021). Federal agencies will use the funding for operations or award most of the funding through direct payments, competitive grants, cooperative agreements, or will allocate it based on formulas that provide pre-determined amounts for each state/territory.
-<br>
+
+<div class = "row">
+<div class = "col-md-8" style="padding-right:25px;">
 ```{r, echo=FALSE, message=FALSE, warning=FALSE, echo=FALSE}
 BIL$StateFunding <- formattable::currency(BIL$StateFunding)
 
+terrList <- c("Puerto Rico", "American Samoa", "Guam", "Northern Mariana Islands", "Virgin Islands (U.S.)")
+terrFIPS <- c(60,66,69,72,78)
+terr_pop <- read.csv("C:/Users/GraceParker/Downloads/2023_FederalFundingTracker/Territories_pop/Territories_pop.csv")%>%
+  select(Country.Name, X2022)%>%
+  dplyr::filter(Country.Name %in% terrList)
+# fundByTerr$Funding <- formattable::currency(fundByTerr$Funding, digits = 0L)
+targetN <- c("AS","GU", "MP", "PR", "VI")
+terr_pop$State <- c("AS","GU","MP","PR","VI")
+terrData <- left_join(stateData, terr_pop, by = "State")%>%
+  dplyr::filter(State %in% targetN)
+colnames(terrData)[6] <- "Territory"
+
+gTarg <- c("COOPERATIVE AGREEMENT (B)","PROJECT GRANT (B)")
+Grants_Terr <- dplyr::filter(funData, award_type %in% gTarg)%>%dplyr::filter(recipient_state %in% targetN)%>%
+  group_by(recipient_state)%>%
+  dplyr::summarise(Funding = sum(transaction_obligated_amount)) %>% 
+  as.data.frame()
+
+terrData$perCapita <- terrData$Funding/terrData$X2022
+colnames(Grants_Terr)[1] <- "State"
+terrData <- left_join(terrData,Grants_Terr, by="State")
+terrData$GrantsPerCap = terrData$Funding.y/terrData$X2022
+terrData$GrantsPerCap <- formattable::currency(terrData$GrantsPerCap, digits=0L)
+terrData$Funding.y <- signif(as.numeric(terrData$Funding.y), 5)
+terrData$Funding.y <- formattable::currency(terrData$Funding.y, digits=0L)
+ 
+terrData<- terrData%>% select(Territory, Funding.x, perCapita, Funding.y, GrantsPerCap) 
+terrData <- terrData[order(terrData$Funding.x,decreasing=TRUE),]
+
+# colnames(Grants_Terr)[1] <-"STATE"
+TerrMap <- SETerr%>% filter(STATE%in% targetN)
+colnames(TerrMap)[2] <- "Territory"
+terrData$Territory[5] <- "Virgin Islands"
+TerrGrantsMap <- left_join(TerrMap, terrData, by="Territory")
+Total <-TerrGrantsMap
+Grants <- TerrGrantsMap
 #tmap PR
 tmap_mode(mode ="view")
 puerto <- tm_basemap("CartoDB.PositronNoLabels")+
-tm_shape(BIL) +
-  tm_polygons("StateFunding",
+tm_shape(Total) +
+  tm_polygons("Funding.x",
       palette= c("#75C7D3", "#006A7E", "#00315E"),
       breaks=c(0, 50000000, 100000000, Inf),
       textNA= "$0",
-      labels = c("$0-50,000,000", "$50,000,000-100,000,000", "$100,000,000+"),
-      popup.vars= c("Funding: "="StateFunding"),
+      labels = c("$0-50 million", "$50-100 million", "$100 million+"),
+      legend.position=c("right","bottom"),
+      popup.vars= c("Funding: "="Funding.x"),
       popup.format= list(prefix="$", big.num.abbr=NA),
       id= "NAME",
-      title= "BIL Territory Funding",
+      title= "Territory Funding",
+      border.col="white")+
+  tm_shape(Grants) +
+  tm_polygons("Funding.y",
+      palette= c("#75C7D3", "#006A7E", "#00315E"),
+      breaks=c(0, 30000000, 50000000, Inf),
+      textNA= "$0",
+      labels = c("$0-30 million", "$30-50 million",
+      "$50 million+"),
+      legend.show=FALSE,
+      popup.vars= c("Grants: "="Funding.y"),
+      popup.format= list(prefix="$", big.num.abbr=NA),
+      id= "STATE",
+      title= "Grants Funding",
       border.col="white")+
 tm_borders(col="white", lwd=.25)+
 tmap_options(check.and.fix = TRUE)+
@@ -187,45 +362,84 @@ tm_view(set.view=c(-66,18,7))
 #tmap GU
 tmap_mode(mode ="view")
 guam <- tm_basemap("CartoDB.PositronNoLabels")+
-tm_shape(BIL) +
-  tm_polygons("StateFunding",
+tm_shape(Total) +
+  tm_polygons("Funding.x",
       palette= c("#75C7D3", "#006A7E", "#00315E"),
       breaks=c(0, 50000000, 100000000, Inf),
       textNA= "$0",
+      labels = c("$0-50 million", "$50-100 million", "$100 million+"),
       legend.show=FALSE,
-      # labels = c("$0-50,000,000", "$50,000,000-100,000,000",
-      # "$100,000,000+"),
-      popup.vars= c("Funding: "="StateFunding"),
+      popup.vars= c("Funding: "="Funding.x"),
       popup.format= list(prefix="$", big.num.abbr=NA),
       id= "NAME",
-      title= "BIL State Funding",
+      title= "Territory Funding",
+      border.col="white")+
+  tm_shape(Grants) +
+  tm_polygons("Funding.y",
+      palette= c("#75C7D3", "#006A7E", "#00315E"),
+      breaks=c(0, 30000000, 50000000, Inf),
+      textNA= "$0",
+      labels = c("$0-30 million", "$30-50 million",
+      "$50 million+"),
+      popup.vars= c("Grants: "="Funding.y"),
+      popup.format= list(prefix="$", big.num.abbr=NA),
+      id= "STATE",
+      title= "Grant Funding",
       border.col="white")+
 tm_borders(col="white", lwd=.25)+
-tmap_options(check.and.fix = TRUE, output.size=50)+
+tmap_options(check.and.fix = TRUE)+
 tm_view(set.view=c(144.5,14,8))
 
 #tmap AS
-tmap_mode(mode ="view")
 samoa <- tm_basemap("CartoDB.PositronNoLabels")+
-tm_shape(BIL) +
-  tm_polygons("StateFunding",
+tm_shape(Total) +
+  tm_polygons("Funding.x",
       palette= c("#75C7D3", "#006A7E", "#00315E"),
       breaks=c(0, 50000000, 100000000, Inf),
       textNA= "$0",
-      # labels = c("$0-50,000,000", "$50,000,000-100,000,000",
-      # "$100,000,000+"),
+      labels = c("$0-50,000,000", "$50,000,000-100,000,000", "$100,000,000+"),
       legend.show=FALSE,
-      popup.vars= c("Funding: "="StateFunding"),
+      popup.vars= c("Funding: "="Funding.x"),
       popup.format= list(prefix="$", big.num.abbr=NA),
       id= "NAME",
-      title= "BIL State Funding",
+      title= "Territory Funding",
       border.col="white")+
-  tm_borders(col="white", lwd=.25)+
-  tmap_options(check.and.fix = TRUE, output.size=50)+
-  tm_view(set.view=c(-169.5,-14,7))
+  tm_shape(Grants) +
+  tm_polygons("Funding.y",
+      palette= c("#75C7D3", "#006A7E", "#00315E"),
+      breaks=c(0, 30000000, 50000000, Inf),
+      textNA= "$0",
+      labels = c("$0-50,000,000", "$50,000,000-100,000,000",
+      "$100,000,000+"),
+      legend.show=FALSE,
+      popup.vars= c("Grants: "="Funding.y"),
+      popup.format= list(prefix="$", big.num.abbr=NA),
+      id= "STATE",
+      title= "Grants Funding",
+      border.col="white")+
+tm_borders(col="white", lwd=.25)+
+tmap_options(check.and.fix = TRUE)+
+tm_view(set.view=c(-170,-14,7))
 
 tmap_arrange(puerto, guam, samoa, nrow=1, ncol=3, widths=c(.25,.25,.25))
 
+# BILterr <- BIL%>%filter(STATE %in% targetO)
+# chartTerr <- left_join(BILterr,Grants_Terr, by="STATE")
+# 
+# chartTerr <- chartTerr[order(chartTerr$Funding,decreasing=TRUE),]%>%as.data.frame()%>%
+#   select(STATE, Funding, perCapita, GrantFunding, perCapitaGrants)
+# colnames(RegMap)[3] <-"Total Per Capita"
+# colnames(RegMap)[4] <- "Grant Funding"
+# colnames(RegMap)[5] <- "Grants Per Capita"
+# RegionTable<- RegMap%>% kbl(row.names=FALSE) %>%
+#   kable_styling(bootstrap_options = c("striped", "hover", "condensed", "responsive"), full_width = F, html_font="Calibri", font_size = 14, position="center", row_label_position = r)%>%
+#   add_header_above(c("Funding by Region"=5))%>%
+#   row_spec(1:9, color  = "black")%>%
+#   column_spec(1:5, "3cm")
+# RegionTable
+# 
+# save_kable(RegionTable,"C:/Users/GraceParker/Downloads/2023_FederalFundingTracker/Regiontable.png")
+# 
 # bbox_PR <- st_bbox(c(xmin = -67.7, xmax = -64.0, ymax = 19, ymin = 17.5), crs = st_crs(4326))
 # 
 # mbtiles <- get_static_tiles(
@@ -236,20 +450,21 @@ tmap_arrange(puerto, guam, samoa, nrow=1, ncol=3, widths=c(.25,.25,.25))
 #   access_token= "pk.eyJ1IjoiZ3Bhcmtlci1zZWVhIiwiYSI6ImNsa3I0ZHFtajJnc2QzcWtlajlmbWV3d2IifQ.jk6o3SXtTTAneVg11e_pww"
 # )
 # 
-# tm_shape(mbtiles) + 
-#   tm_rgb() + 
-#   tm_shape(BIL) + 
-#   tm_polygons("StateFunding",
+# tm_shape(mbtiles) +
+#   tm_rgb() +
+#   tm_shape(TerrGrantsMap) +
+#   tm_polygons("Funding",
 #           palette= c("#75C7D3", "#006A7E", "#00315E"),
-#           breaks=c(0, 50000000, 100000000, Inf),
+#           breaks=c(0, 30000000, 50000000, Inf),
+#           labels = c("$0-30 million", "$30-50 million", "$50 million+"),
 #           textNA= "$0",
 #           alpha=.85,
 #       legend.show=FALSE,
-#       border.col="white") + 
+#       border.col="white") +
 #   tm_layout(legend.outside = TRUE)
 # 
-# tmap_save(filename="C:/Users/GraceParker/Downloads/2023_FederalFundingTracker/puerto.png", dpi=1200)
-
+# tmap_save(filename="C:/Users/GraceParker/Downloads/2023_FederalFundingTracker/puerto_grants.png", dpi=1200)
+# 
 # bbox_AS <- st_bbox(c(xmin = -171.2, xmax = -169.0, ymax = -13.9, ymin = -14.5), crs = st_crs(4326))
 # 
 # mbtiles <- get_static_tiles(
@@ -260,19 +475,20 @@ tmap_arrange(puerto, guam, samoa, nrow=1, ncol=3, widths=c(.25,.25,.25))
 #   access_token= "pk.eyJ1IjoiZ3Bhcmtlci1zZWVhIiwiYSI6ImNsa3I0ZHFtajJnc2QzcWtlajlmbWV3d2IifQ.jk6o3SXtTTAneVg11e_pww"
 # )
 # 
-# tm_shape(mbtiles) +
-#   tm_rgb() +
-#   tm_shape(BIL) +
-#   tm_polygons("StateFunding",
-#           palette= c("#75C7D3", "#006A7E", "#00315E"),
-#           breaks=c(0, 50000000, 100000000, Inf),
-#           textNA= "$0",
-#           alpha=.85,
-#       legend.show=FALSE,
-#       border.col="white")
+# # tm_shape(mbtiles) +
+# #   tm_rgb() +
+# #   tm_shape(TerrGrantsMap) +
+# #   tm_polygons("Funding",
+# #           palette= c("#75C7D3", "#006A7E", "#00315E"),
+# #           breaks=c(0, 30000000, 50000000, Inf),
+# #           textNA= "$0",
+# #           alpha=.85,
+# #       legend.show=FALSE,
+# #       border.col="white")+
+# #   tm_layout(legend.outside = TRUE)
 # 
-# # tmap_save(filename="C:/Users/GraceParker/Downloads/2023_FederalFundingTracker/samoa.png", dpi=1200)
-# 
+# tmap_save(filename="C:/Users/GraceParker/Downloads/2023_FederalFundingTracker/samoa_grants.png", dpi=1200)
+
 
 # bbox_GU <- st_bbox(c(xmin = 144, xmax = 146.7, ymax = 15.4, ymin = 13), crs = st_crs(4326))
 # mbtiles <- get_static_tiles(
@@ -325,46 +541,71 @@ tmap_arrange(puerto, guam, samoa, nrow=1, ncol=3, widths=c(.25,.25,.25))
 # tmap_save(filename="C:/Users/GraceParker/Downloads/2023_FederalFundingTracker/guam.png", dpi=1200)
 
 ```
+</div>
 
+<div class = "col-md-4">
+<br>
+The Infrastructure Investment and Jobs Act, also known as the Bipartisan Infrastructure Law (BIL), was passed in November 2021 and allocates $1.2 trillion over ten years in funding for infrastructure projects including roads, public transit, broadband, and electric grid upgrades. As federal agencies continue to allocate BIL funding, this map shows how much funding recipients in the territories have received as of July 13, 2023. This dashboard focuses on funding available through the BIL, and we plan to address additional sources of funding, including the Inflation Reduction Act (IRA) in future versions of this whitepaper as more funding is allocated.
+<br>
+</div>
 ## Funding Analysis {.tabset}
 
 ### Territories
-
+<div class = "row">
+<div class = "col-md-7" style="padding-right:25px;">
 ``` {r echo=FALSE}
-terrList <- c("Puerto Rico", "American Samoa", "Guam", "Northern Mariana Islands", "Virgin Islands (U.S.)")
-terrFIPS <- c(60,66,69,72,78)
-terr_pop <- read.csv("C:/Users/GraceParker/Downloads/2023_FederalFundingTracker/Territories_pop/Territories_pop.csv")%>%
-  select(Country.Name, X2022)%>%
-  dplyr::filter(Country.Name %in% terrList)
-# fundByTerr$Funding <- formattable::currency(fundByTerr$Funding, digits = 0L)
-targetN <- c("AS","GU", "MP", "PR", "VI")
-terr_pop$State <- c("AS","GU","MP","PR","VI")
-terrData <- left_join(stateData, terr_pop, by = "State")%>%
-  dplyr::filter(State %in% targetN)
-colnames(terrData)[6] <- "Territory"
+terrData$Percent <- 100*(as.numeric(terrData$Funding.x)/sum(as.numeric(terrData$Funding.x)))
+terrData$Percent <- format(round(terrData$Percent, 2), nsmall=2)
+terrData$Percent <- as.numeric(terrData$Percent)
+terrData$zone.start <- with(terrData, c(0, cumsum(Percent)[-length(Percent)]))  
+terrData$zone.end <- with(terrData, cumsum(Percent))  
+terrData$label.point <- with(terrData, ((zone.start + zone.end) / 2)) 
 
-terrData$perCapita <- terrData$Funding/terrData$X2022
-  
-terrData <- terrData[order(terrData$Funding,decreasing=TRUE),]
-terrTable<- terrData%>% select(Territory, Funding, perCapita) %>% kbl(row.names=FALSE) %>%
+pie <- ggplot(terrData, aes(x="", y=Percent, fill=reorder(Territory, Percent, decreasing=F)))+
+  geom_bar(width = 1, stat = "identity")+
+  coord_polar("y", start=0)+
+  scale_fill_manual(values=c("#900C3F", "#C70039", "#D4442D", "#FCB616","#FFF7B3"), name="Territories") +
+  geom_text_repel(data = terrData,
+                   aes(y = label.point, label = ifelse(Percent>5,paste0(Percent, "%"),""), family="Open Sans"),
+                   size = 4.5, nudge_x = 1, show.legend = FALSE) +
+  ggtitle("U.S. Territories Funding")+
+  theme_void(base_family= "Open Sans")+
+  theme(legend.key.height = unit(.5,'cm'),
+        legend.key.width = unit(.5, 'cm'))
+pie
+
+ggsave("C:/Users/GraceParker/Downloads/2023_FederalFundingTracker/FundingbyTerr.png", width = 6,   height = 4.25, dpi=1100)
+```
+</div>
+
+<div class = "col-md-5">
+``` {r echo=FALSE}
+
+terrData <-terrData%>%select(Territory, Funding.x, perCapita)
+colnames(terrData)[2] <- "Funding" 
+colnames(terrData)[3] <- "Total Per Capita" 
+# colnames(terrData)[4] <- "Grant Funding" 
+# colnames(terrData)[5] <- "Grants Per Capita" 
+terrTable<- terrData%>% kbl(row.names=FALSE) %>%
   kable_styling(bootstrap_options = c("striped", "hover", "condensed", "responsive"), full_width = F, html_font="Open Sans", font_size = 14, position="center", row_label_position = r)%>%
   add_header_above(c("Funding by Territory"=3))%>%
-  row_spec(1:5, color  = "black")%>%
-  column_spec(1:3, "5cm")
+  row_spec(1:3, color  = "black")%>%
+  column_spec(1:3, "4cm")
+terrTable
+save_kable(terrTable,"C:/Users/GraceParker/Downloads/2023_FederalFundingTracker/Terrtable.png")
+
 
 terrTotal <- sum(terrData$Funding)
 percTerr <- as.numeric(terrTotal/totalUS*100)
 terrPoptotal <- sum(terrData$X2022)
 perCapitaTerr <- terrTotal/terrPoptotal
+
 ```
-As of July 13, 2023, the federal government had committed $457 million in Infrastructure Investment and Jobs Act funding to the U.S. territories, or about `r perCapitaTerr` per person. The U.S. territories per capita funding is substantially less than the national average of `r avgPerCapUS`. This represents about .42% of total BIL funding committed nationally. Each U.S territory has received between $29 and 307 million each, with Puerto Rico receiving drastically more than the other territories. However, with a significantly larger population of about 3.2 million people, Puerto Rico still received significantly less on a per capita basis than the other territories.
-<br>
-
+</div>
+### Funding by Category
+<div class = "row">
+<div class = "col-md-7" style="padding-right:25px;">
 ``` {r echo=FALSE, fig.align='center'}
-
-terrTable
-save_kable(terrTable,"C:/Users/GraceParker/Downloads/2023_FederalFundingTracker/terrtable.png")
-
 funcTerr <- funData %>% dplyr::filter(recipient_state %in% targetN)%>%
   group_by(budget_subfunction) %>% dplyr::summarise(
   Funding = sum(transaction_obligated_amount)
@@ -395,8 +636,25 @@ pie
 
 ggsave("C:/Users/GraceParker/Downloads/2023_FederalFundingTracker/Categories_Terr.png", width = 6,   height = 4.25, dpi=1100)
 ```
+</div>
 
-``` {r echo=FALSE, results='hide', fig.show='hide'}
+<div class = "col-md-5">
+``` {r echo=FALSE}
+funcTerr$Funding <- signif(funcTerr$Funding, 5)
+funcTerr$Funding <- formattable::currency(funcTerr$Funding, digits = 0L)
+terrFuncTable <-funcTerr%>%select(Category, Funding)%>%kbl(row.names=FALSE) %>%
+  kable_styling(bootstrap_options = c("striped", "hover", "condensed", "responsive"), full_width = F, html_font="Open Sans", font_size = 14, position="center", row_label_position = r)%>%
+  add_header_above(c("Territory Funding by Category"=2))%>%
+  row_spec(1:5, color  = "black")%>%
+  column_spec(1:2, "4cm")
+terrFuncTable
+save_kable(terrFuncTable,"C:/Users/GraceParker/Downloads/2023_FederalFundingTracker/TerrFunctable.png")
+```
+</div>
+### Funding by Award Type
+<div class = "row">
+<div class = "col-md-7" style="padding-right:25px;">
+``` {r echo=FALSE}
 fundByType_Terr <- funData %>% dplyr::filter(recipient_state %in% targetN)%>%
   group_by(award_type) %>% 
   dplyr::summarise(
@@ -415,25 +673,43 @@ colnames(fundByType_Terr)[1] <- "Type"
 fundByType_Terr$Type <- str_to_title(fundByType_Terr$Type)
 fundByType_Terr$Type[4] <- "Direct Payment Specified Use"
 fundByType_Terr$Type[6] <- "Other Financial Assistance"
+fundByType_Terr$Type[1] <- "Block Grant"
+fundByType_Terr$Type[2] <- "Cooperative Agreement"
+fundByType_Terr$Type[5] <- "Formula Grant"
+fundByType_Terr$Type[7] <- "Project Grant"
 
 pie <- ggplot(fundByType_Terr, aes(x="", y=Percent, fill=Type))+
   geom_bar(width = 1, stat = "identity")+
   coord_polar("y", start=0)+
-  scale_fill_manual(values=c("#900C3F", "#C70039", "#D4442D", "#FCB616", "#52BE80", "#AAC5E2", "#75C7D3", "#00869F", "#6171AF","#DCB6D0","#C799C8", "#D2D2D2", "#7B7B7B","#585757")) +
+  scale_fill_manual(values=c("#900C3F", "#D4442D", "#FCB616", "#75C7D3", "#00869F", "#C799C8", "#D2D2D2", "#585757")) +
   geom_text_repel(data = fundByType_Terr,
                    aes(y = label.point, label = ifelse(Percent>5,paste0(Percent, "%"),""),family="Open Sans"),
                    size = 4.5, nudge_x = 1, show.legend = FALSE, max.overlaps =20) +
   ggtitle("U.S. Territories Funding by Award Type")+
-  theme_void(base_family= "Open Sans")
+  theme_void(base_family= "Open Sans")+ 
+  theme(plot.title = element_text(size=12))
 pie
 
 ggsave("C:/Users/GraceParker/Downloads/2023_FederalFundingTracker/award_type.png", width = 6,   height = 4, dpi=1100)
 ```
+</div>
 
+<div class = "col-md-5">
+``` {r echo=FALSE}
+fundByType_Terr$Funding <- signif(fundByType_Terr$Funding, 5)
+fundByType_Terr$Funding <- formattable::currency(fundByType_Terr$Funding, digits = 0L)
+terrTypeTable <-fundByType_Terr%>%select(Type, Funding)%>%kbl(row.names=FALSE) %>%
+  kable_styling(bootstrap_options = c("striped", "hover", "condensed", "responsive"), full_width = F, html_font="Open Sans", font_size = 14, position="center", row_label_position = r)%>%
+  add_header_above(c("Territory Funding by Type"=2))%>%
+  row_spec(1:5, color  = "black")%>%
+  column_spec(1:2, "4cm")
+terrTypeTable
+save_kable(terrTypeTable,"C:/Users/GraceParker/Downloads/2023_FederalFundingTracker/terrTypeTable.png")
+```
+</div>
 ### Energy Funding
-
-Energy conservation makes up about 2.9 percent of funding, or $13.2 million in the territories. Energy conservation funding in the territories, like in the Southeast, is also dominated by the State Energy Program and the Weatherization Assistance Program (WAP). There is significant variation among the territories in how much funding they each received. For WAP, Puerto Rico received nearly ten times as much committed funding as any other territory, while for the State Energy Program, Guam and the U.S. Virgin Islands received over ten times more than the other territories.
-<br>
+<div class = "row">
+<div class = "col-md-6" style="padding-right:20px;">
 ``` {r echo=FALSE}
 ###Weatherization Assistance Program Funding TERRITORIES
 WAPdata_terr <- read.csv("C:/Users/GraceParker/Downloads/2023_FederalFundingTracker/EnergyFunding_Territories/EnergyFunding_Territories.csv")%>%select(obligated_amount_from_IIJA_supplemental, program_activities_funding_this_award, recipient_name, cfda_numbers_and_titles, recipient_state_name)%>%filter(cfda_numbers_and_titles == "81.042: WEATHERIZATION ASSISTANCE FOR LOW-INCOME PERSONS")
@@ -454,7 +730,11 @@ WAPtable<- WAPdata_terr%>% select(Recipient, Funding)%>% kbl(row.names=FALSE) %>
 WAPtable
 save_kable(WAPtable,"C:/Users/GraceParker/Downloads/2023_FederalFundingTracker/WAPtable_terr.png")
 WAPtotal_terr <- sum(WAPdata_terr$Funding)
+```
+</div>
 
+<div class = "col-md-6">
+```{r, echo=FALSE, fig.align='center'}
 ###State Energy Office Funding TERRITORIES
 SEOdata_terr <- read.csv("C:/Users/GraceParker/Downloads/2023_FederalFundingTracker/EnergyFunding_Territories/EnergyFunding_Territories.csv")%>%select(obligated_amount_from_IIJA_supplemental, program_activities_funding_this_award, recipient_name, cfda_numbers_and_titles, recipient_state_name)%>%filter(cfda_numbers_and_titles == "81.041: STATE ENERGY PROGRAM")
 
@@ -475,9 +755,40 @@ SEOtable<-SEOdata_terr%>% select(Recipient, Funding)%>% kbl(row.names=FALSE) %>%
 SEOtable
 save_kable(SEOtable,"C:/Users/GraceParker/Downloads/2023_FederalFundingTracker/SEOtable_terr.png")
 SEOtotal_terr <- sum(SEOdata_terr$Funding)
-```
 
+# #function and award type data, filter to Territories minus PR
+# funcTerr <-dplyr::filter(funData, recipient_state=="AS"|recipient_state=="MP"|recipient_state=="GU"|recipient_state=="VI")%>%
+#   group_by(budget_subfunction) %>% dplyr::summarise(
+#   Funding = sum(transaction_obligated_amount)
+#   )%>% as.data.frame()
+# 
+# funcTerr$Percent <- 100*(funcTerr$Funding/sum(funcTerr$Funding))
+# funcTerr$Percent <- format(round(funcTerr$Percent, 2), nsmall=2)
+# funcTerr$Percent <- as.numeric(funcTerr$Percent)
+# 
+# funcTerr$zone.start <- with(funcTerr, c(0, cumsum(Percent)[-length(Percent)]))  
+# funcTerr$zone.end <- with(funcTerr, cumsum(Percent))  
+# funcTerr$label.point <- with(funcTerr, (100-(zone.start + zone.end) / 2)) 
+# 
+# colnames(funcTerr)[1] <- "Category"
+# 
+# pie <- ggplot(funcTerr, aes(x="", y=Percent, fill=Category))+
+#   geom_bar(width = 1, stat = "identity")+
+#   coord_polar("y", start=0)+
+#   scale_fill_manual(values=c("#FFA07A","#900C3F","#C70039", "#D4442D", "#00869F", "#6171AF","#DCB6D0","#C799C8","#7B7B7B","#585757")) +
+#   geom_text_repel(data = funcTerr,
+#                    aes(y = label.point, label = ifelse(Percent>10,paste0(Percent, "%"),""), family="Open Sans"),
+#                    size = 4.5, nudge_x = 1, show.legend = FALSE)+
+#   ggtitle("American Samoa, Guam, Northern Mariana Islands, and Virgin Islands")+
+#   theme_void(base_family = "Open Sans")
+# pie
+# ggsave("C:/Users/GraceParker/Downloads/2023_FederalFundingTracker/FuncTerr_cat.png", width = 6,   height = 4.25, dpi=1100)
+
+```
+</div>
 ### American Samoa
+<div class = "row">
+<div class = "col-md-7" style="padding-right:25px;">
 ```{r, echo=FALSE, fig.align='center'}
 #function and award type data, filter to American Samoa
 funcAS <-dplyr::filter(funData, recipient_state=="AS")%>%
@@ -502,11 +813,15 @@ pie <- ggplot(funcAS, aes(x="", y=Percent, fill=Category))+
   geom_text_repel(data = funcAS,
                    aes(y = label.point, label = ifelse(Percent>10,paste0(Percent, "%"),""), family="Open Sans"),
                    size = 4.5, nudge_x = 1, show.legend = FALSE)+
-  ggtitle("American Samoa Funding by Category")+
+  ggtitle("American Samoa Funding")+
   theme_void(base_family = "Open Sans")
 pie
-```
+ggsave("C:/Users/GraceParker/Downloads/2023_FederalFundingTracker/AmericanSam_cat.png", width = 6,   height = 4.25, dpi=1100)
 
+```
+</div>
+
+<div class = "col-md-5">
 ``` {r echo=FALSE}
 funcAS$Funding <- signif(funcAS$Funding, 5)
 funcAS$Funding <- currency(funcAS$Funding, digits = 0L)
@@ -517,11 +832,19 @@ funcAS%>% select(Category, Funding)%>% kbl() %>%
   column_spec(1, "10cm")%>%
   column_spec(2, "3cm")
 ```
-
+</div>
+</div>
+<div class = "row">
+<br>
+<br>
+<br>
+</div>
 #### Spotlight on Projects
 American Samoa Government Department of Commerce: The National Oceanic and Atmospheric Administration committed $203,000 to American Samoa for wetland delineation, wetland monitoring, training, and community outreach, as well as to create recommendations for permitting policies and nature-based restoration projects. 
 
 ### Guam
+<div class = "row">
+<div class = "col-md-7" style="padding-right:25px;">
 ```{r, echo=FALSE, fig.align='center'}
 #function and award type data, filter to GUAM
 funcGU <-dplyr::filter(funData, recipient_state=="GU")%>%
@@ -546,11 +869,14 @@ pie <- ggplot(funcGU, aes(x="", y=Percent, fill=Category))+
   geom_text_repel(data = funcGU,
                    aes(y = label.point, label = ifelse(Percent>10,paste0(Percent, "%"),""), family="Open Sans"),
                    size = 4.5, nudge_x = 1, show.legend = FALSE)+
-  ggtitle("Guam Funding by Category")+
+  ggtitle("Guam Funding")+
   theme_void(base_family = "Open Sans")
 pie
-```
 
+ggsave("C:/Users/GraceParker/Downloads/2023_FederalFundingTracker/Guam_cat.png", width = 6,   height = 4.25, dpi=1100)
+```
+</div>
+<div class = "col-md-5">
 
 ``` {r echo=FALSE}
 
@@ -563,11 +889,19 @@ funcGU%>% select(Category, Funding)%>% kbl() %>%
   column_spec(1, "10cm")%>%
   column_spec(2, "3cm")
 ```
-
+</div>
+</div>
+<div class = "row">
+<br>
+<br>
+<br>
+</div>
 #### Spotlight on Projects
 Teleguam Holdings: The Department of Agriculture committed $29 million to Teleguam Holdings to provide internet connection to 8,000 households in Guam.
 
 ### Northern Mariana Islands
+<div class = "row">
+<div class = "col-md-7" style="padding-right:25px;">
 ```{r, echo=FALSE, fig.align='center'}
 #function and award type data, filter to Northern Mariana Islands
 funcMP <-dplyr::filter(funData, recipient_state=="MP")%>%
@@ -592,11 +926,15 @@ pie <- ggplot(funcMP, aes(x="", y=Percent, fill=Category))+
   geom_text_repel(data = funcMP,
                    aes(y = label.point, label = ifelse(Percent>10,paste0(Percent, "%"),""), family="Open Sans"),
                    size = 4.5, nudge_x = 1, show.legend = FALSE)+
-  ggtitle("Northern Mariana Islands Funding by Category")+
+  ggtitle("Northern Mariana Islands Funding")+
   theme_void(base_family = "Open Sans")
 pie
-```
 
+ggsave("C:/Users/GraceParker/Downloads/2023_FederalFundingTracker/Mariana_cat.png", width = 6,   height = 4.25, dpi=1100)
+
+```
+</div>
+<div class = "col-md-5">
 ``` {r echo=FALSE}
 funcMP$Funding <- signif(funcMP$Funding, 5)
 funcMP$Funding <- currency(funcMP$Funding, digits = 0L)
@@ -607,11 +945,20 @@ funcMP%>% select(Category, Funding)%>% kbl() %>%
   column_spec(1, "10cm")%>%
   column_spec(2, "3cm")
 ```
+</div>
+</div>
+<div class = "row">
+<br>
+<br>
+<br>
+</div>
 
 #### Spotlight on Projects 
 Commonwealth Utilities Corporation: The Environmental Protection Agency committed $20.6 million to improve the drinking water system on the Northern Mariana Islands, including by replacing and upgrading water mains and pressurizing the transmission and distribution system. These projects will aid in providing reliable, potable drinking water to every customer.
 
 ### Puerto Rico
+<div class = "row">
+<div class = "col-md-7" style="padding-right:25px;">
 ```{r, echo=FALSE, fig.align='center'}
 #function and award type data, filter to Puerto Rico
 funcPR <-dplyr::filter(funData, recipient_state=="PR")%>%
@@ -636,11 +983,15 @@ pie <- ggplot(funcPR, aes(x="", y=Percent, fill=Category))+
   geom_text_repel(data = funcPR,
                    aes(y = label.point, label = ifelse(Percent>10,paste0(Percent, "%"),""), family="Open Sans"),
                    size = 4.5, nudge_x = 1, show.legend = FALSE)+
-  ggtitle("Puerto Rico Funding by Category")+
+  ggtitle("Puerto Rico")+
   theme_void(base_family = "Open Sans")
 pie
-```
 
+ggsave("C:/Users/GraceParker/Downloads/2023_FederalFundingTracker/PuertoRico_cat.png", width = 6,   height = 4.25, dpi=1100)
+
+```
+</div>
+<div class = "col-md-5">
 
 ``` {r echo=FALSE}
 funcPR$Funding <- signif(funcPR$Funding, 5)
@@ -652,11 +1003,13 @@ funcPR%>% select(Category, Funding)%>% kbl() %>%
   column_spec(1, "10cm")%>%
   column_spec(2, "3cm")
 ```
-
+</div>
 #### Spotlight on Projects
 Institute for Socio-Ecological Research: The Department of Commerce will commit $10.6 million to construct five acres of coral reef at three locations in Puerto Rico. The project will reintroduce slow-growing, reef-building coral species, including threatened species. 
 
 ### Virgin Islands
+<div class = "row">
+<div class = "col-md-7" style="padding-right:25px;">
 ```{r, echo=FALSE, fig.align='center'}
 #function and award type data, filter to Virgin Islands
 funcVI <-dplyr::filter(funData, recipient_state=="VI")%>%
@@ -681,12 +1034,16 @@ pie <- ggplot(funcVI, aes(x="", y=Percent, fill=Category))+
   geom_text_repel(data = funcVI,
                    aes(y = label.point, label = ifelse(Percent>10,paste0(Percent, "%"),""), family="Open Sans"),
                    size = 4.5, nudge_x = 1, show.legend = FALSE)+
-  ggtitle("Virgin Islands Funding by Category")+
+  ggtitle("Virgin Islands")+
   theme_void(base_family = "Open Sans")
 pie
+
+ggsave("C:/Users/GraceParker/Downloads/2023_FederalFundingTracker/VirginIs_cat.png", width = 6,   height = 4.25, dpi=1100)
+
 ```
 
-
+</div>
+<div class = "col-md-5">
 ``` {r echo=FALSE}
 funcVI$Funding <- signif(funcVI$Funding, 5)
 funcVI$Funding <- currency(funcVI$Funding, digits = 0L)
@@ -697,6 +1054,12 @@ funcVI%>% select(Category, Funding)%>% kbl() %>%
   column_spec(1, "10cm")%>%
   column_spec(2, "3cm")
 ```
+</div>
+<div class = "row">
+<br>
+<br>
+<br>
+</div>
 
 #### Spotlight on Projects
 Island Conservation: The Department of Interior committed $250,000 to Island Conservation to aid in invasive species eradication and create a refuge for the endangered Virgin Islands tree boa.
